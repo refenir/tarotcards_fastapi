@@ -1,0 +1,62 @@
+{
+    "history": [
+        {
+            "id": 1,
+            "readingType": "career",
+            "description": "will my boss be a b to me?",
+            "card_list": [
+            {
+                "name": "Three of Swords",
+                "number": "3",
+                "arcana": "Minor Arcana",
+                "suit": "Swords",
+                "img": "s03.jpg"
+            },
+            {
+                "name": "Two of Cups",
+                "number": "2",
+                "arcana": "Minor Arcana",
+                "suit": "Cups",
+                "img": "c02.jpg"
+            },
+            {
+                "name": "Nine of Swords",
+                "number": "9",
+                "arcana": "Minor Arcana",
+                "suit": "Swords",
+                "img": "s09.jpg"
+            }
+            ],
+            "sum": 14
+        },
+        {
+            "id": 2,
+            "readingType": "love",
+            "description": "i wanna be loved :(",
+            "card_list": [
+            {
+                "name": "Nine of Cups",
+                "number": "9",
+                "arcana": "Minor Arcana",
+                "suit": "Cups",
+                "img": "c09.jpg"
+            },
+            {
+                "name": "Knight of Pentacles",
+                "number": "12",
+                "arcana": "Minor Arcana",
+                "suit": "Pentacles",
+                "img": "p12.jpg"
+            },
+            {
+                "name": "Knight of Wands",
+                "number": "12",
+                "arcana": "Minor Arcana",
+                "suit": "Wands",
+                "img": "w12.jpg"
+            }
+            ],
+            "sum": 33
+        }
+    ]
+}
