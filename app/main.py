@@ -1,7 +1,6 @@
 from fastapi import FastAPI, Response
 from typing import Optional, Union
 from copy import deepcopy
-from operator import itemgetter
 import json
 import random
 import re
@@ -28,32 +27,35 @@ with open ('./app/history.json') as f:
 def read_root():
     return "Let's get divining \N{crystal ball}"
 
-# Get the list of all cards, acceptable cardTypes: major, minor, cup, sword, wand, pentacle (can be conbined)
+# Get the list of all cards
 @app.get("/cards")
-def get_cards(response: Response, cardType: Optional[str] = None):
+def get_cards():
     with open ('./app/tarot.json') as f:
         data = json.load(f)
-    result = []
-    if cardType is not None:
-        if "major" in cardType.lower():
-            result.append(card for card in data["cards"] if card["arcana"] == "Major Arcana")
-        if "minor" in cardType.lower():
-            result.append(card for card in data["cards"] if card["arcana"] == "Minor Arcana")
-        else:
-            if "cup" in cardType.lower():
-                result.append(card for card in data["cards"] if card["suit"] == "Cups")
-            if "sword" in cardType.lower():
-                result.append(card for card in data["cards"] if card["suit"] == "Swords")
-            if "wand" in cardType.lower():
-                result.append(card for card in data["cards"] if card["suit"] == "Wands")
-            if "pentacle" in cardType.lower():
-                result.append(card for card in data["cards"] if card["suit"] == "Pentacles")
-        if len(result) == 0:
+    return data["cards"]
+
+# Acceptable cardTypes: major, minor, cups, swords, wands, pentacles
+@app.get("/cards/{cardType}")
+def get_cards_ref_cardType(response: Response, cardType: str):
+    with open ('./app/tarot.json') as f:
+        data = json.load(f)
+
+    match cardType:
+        case "major":
+            return [card for card in data["cards"] if card["arcana"] == "Major Arcana"]
+        case "minor":
+            return [card for card in data["cards"] if card["arcana"] == "Minor Arcana"]
+        case "cups":
+            return [card for card in data["cards"] if card["suit"] == "Cups"]
+        case "swords":
+            return [card for card in data["cards"] if card["suit"] == "Swords"]
+        case "wands":
+            return [card for card in data["cards"] if card["suit"] == "Wands"]
+        case "pentacles":
+            return [card for card in data["cards"] if card["suit"] == "Pentacles"]
+        case _:
             response.status_code = 400
             return "Invalid card type."
-    else:
-        result = data["cards"]
-    return result
 
 # Do a tarot reading: love/career/anything really
 @app.post("/reading")
@@ -115,6 +117,12 @@ def get_history(response: Response, limit: Optional[int] = None, sortBy: Optiona
         else:
             response.status_code = 400
             return "Invalid sortBy parameter."
+    if limit is not None:
+        if limit > 0:
+            sorted_history = sorted_history[:limit]
+        else:
+            response.status_code = 400
+            return "Invalid limit parameter. Limit should be a positive integer."
     return sorted_history
 
 # Get a specific reading by readingType
@@ -128,35 +136,21 @@ def get_reading(readingType: str, response: Response):
 
 # Delete a specific reading by id
 @app.delete("/history/{param}")
-def delete_reading(param: Union[int, str], response: Response):
+def delete_reading(param: str, response: Response):
     global history
     # single delete using id
-    if isinstance(param, int):
-        result = [reading for reading in history if reading["id"] == id]
+    if param.isnumeric():
+        result = [reading for reading in history if reading["id"] == int(param)]
         if len(result) == 0:
             response.status_code = 404
-            return "Reading not found."
-        history = [reading for reading in history if reading["id"]!= id]
+            return "ID not found."
+        history = [reading for reading in history if reading["id"]!= int(param)]
     #batch delete using readingType
-    elif isinstance(param, str):
+    else:
         result = [reading for reading in history if reading["readingType"] == param]
         if len(result) == 0:
             response.status_code = 404
             return "Readings not found."
         history = [reading for reading in history if reading["readingType"]!= param]
-    else:
-        response.status_code = 400
-        return "Invalid input."
     
-    return result
-
-# Delete all readings by readingType
-@app.delete("/history/{readingType}")
-def delete_reading(readingType: str, response: Response):
-    global history
-    result = [reading for reading in history if reading["readingType"] == readingType]
-    if len(result) == 0:
-        response.status_code = 404
-        return "Reading not found."
-    history = [reading for reading in history if reading["readingType"]!= readingType]
     return result
