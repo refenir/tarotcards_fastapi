@@ -35,7 +35,7 @@ To start a career reading, open up a terminal and type in `curl -H "Content-Type
 ### Idempotent paths
 The GET and DELETE paths are idempotent
 * All the GET requests are purely reading the JSON files, without any modification to them. Thus, when multiple identical GET requests are received, they all give the same response
-![alt text] (/screenshots/GET_requests.png)
+![alt text](/screenshots/GET_requests.png)
 * The DELETE request is idempotent as multiple DELETE requests will not change the delete state. The first DELETE request will return a 200, while consecutive identical DELETE requests will return a 404. Thus, the request will be different after the first request, but there will be no change in state when multiple identical DELETE request comes in
-![alt text] (/screenshots/DELETE_requests.png)
-![alt text] (/screenshots/DELETE_requests_1.png)
+![alt text](/screenshots/DELETE_requests.png)
+![alt text](/screenshots/DELETE_requests_1.png)
